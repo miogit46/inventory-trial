@@ -1,0 +1,1808 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Toko Alat Musik</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#f4f6f9;color:#222;overflow-x:hidden}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+.btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:#ffd166;color:#1e3c72;transition:.2s}
+.btn:active{transform:scale(.98)}
+.btn-sec{background:#2a5298;color:#fff}
+.btn-danger{background:#e63946;color:#fff}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+.btn-sm{padding:8px 12px;font-size:12px;width:auto}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;margin-bottom:5px;color:#555;font-weight:600}
+.field input,.field textarea,.field select{width:100%;padding:11px 13px;border-radius:9px;border:1px solid #ddd;font-size:15px;background:#fff;color:#222;outline:none;font-family:inherit}
+.field textarea{resize:vertical;min-height:60px}
+.field input:focus,.field textarea:focus{border-color:#2a5298}
+/* SETUP */
+#screen-setup{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:30px 20px;justify-content:center}
+.logo{font-size:56px;text-align:center;margin-bottom:8px}
+.app-title{text-align:center;font-size:19px;font-weight:600;margin-bottom:4px}
+.app-sub{text-align:center;font-size:12px;opacity:.85;margin-bottom:26px}
+.setup-card{background:rgba(255,255,255,.1);border-radius:14px;padding:20px}
+.setup-card h2{font-size:15px;margin-bottom:14px;text-align:center}
+/* LOGIN */
+#screen-login{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:30px 20px;justify-content:center;align-items:center}
+.pin-dots{display:flex;gap:14px;margin:24px 0}
+.pin-dots span{width:16px;height:16px;border-radius:50%;border:2px solid #fff;transition:.2s}
+.pin-dots span.filled{background:#ffd166;border-color:#ffd166}
+.keypad{display:grid;grid-template-columns:repeat(3,68px);gap:10px}
+.keypad button{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;border:none;font-size:22px;font-weight:600;cursor:pointer;transition:.15s}
+.keypad button:active{background:#ffd166;color:#1e3c72;transform:scale(.94)}
+.login-msg{margin-top:16px;font-size:12px;min-height:18px;color:#ffd166;text-align:center}
+/* HEADER */
+.app-header{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.15);min-height:54px}
+.app-header h1{font-size:15px;display:flex;align-items:center;gap:8px}
+.app-header .back-btn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:0;line-height:1}
+.app-header .right-btns{display:flex;gap:6px;align-items:center}
+.app-header .icon-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.app-header .user-badge{background:rgba(255,255,255,.15);padding:5px 11px;border-radius:20px;font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600}
+/* HOME */
+#screen-home .content{padding:15px;flex:1;overflow-y:auto;padding-bottom:30px}
+.draft-banner{background:linear-gradient(135deg,#ffd166,#ffb703);color:#1e3c72;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(255,183,3,.3)}
+.draft-banner .info{font-size:12px;font-weight:600}
+.draft-banner .info small{display:block;font-weight:400;opacity:.8;margin-top:1px;font-size:11px}
+.draft-banner button{background:#1e3c72;color:#fff;border:none;padding:7px 13px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer}
+.group-title{font-size:11px;font-weight:700;letter-spacing:1px;color:#888;margin:20px 0 9px 4px;text-transform:uppercase}
+.group-title:first-child{margin-top:0}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.menu-card{background:#fff;border-radius:12px;padding:15px 11px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s;border:2px solid transparent}
+.menu-card:active{transform:scale(.96);border-color:#2a5298}
+.menu-card .icon{font-size:28px}
+.menu-card .label{font-size:12px;font-weight:600;color:#1e3c72;text-align:center;line-height:1.2}
+.menu-card .count{font-size:10px;background:#e0e7ff;color:#2a5298;padding:2px 7px;border-radius:9px;font-weight:600}
+/* PRODUK */
+#screen-produk .content{flex:1;overflow-y:auto;padding:11px;padding-bottom:80px}
+.search-bar{display:flex;gap:7px;margin-bottom:11px}
+.search-bar input{flex:1;padding:10px 13px;border-radius:9px;border:1px solid #ddd;font-size:13px;background:#fff;outline:none}
+.search-bar input:focus{border-color:#2a5298}
+.search-bar select{padding:10px 8px;border-radius:9px;border:1px solid #ddd;font-size:12px;background:#fff;outline:none;max-width:120px}
+.grid-produk{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kartu-produk{background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;transition:.2s;display:flex;flex-direction:column}
+.kartu-produk:active{transform:scale(.97)}
+.kartu-produk .thumb{height:100px;background:linear-gradient(135deg,#e0e7ff,#cfd8ff);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden}
+.kartu-produk .thumb img{width:100%;height:100%;object-fit:cover}
+.kartu-produk .body{padding:9px;flex:1;display:flex;flex-direction:column;gap:3px}
+.kartu-produk .nama{font-size:11px;font-weight:600;color:#1e3c72;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:28px}
+.kartu-produk .meta{font-size:9px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kartu-produk .harga{font-size:12px;font-weight:700;color:#2a5298;margin-top:3px}
+.kartu-produk .stok{font-size:9px;color:#666;background:#f0f0f0;padding:2px 7px;border-radius:7px;align-self:flex-start;margin-top:3px}
+.kartu-produk .stok.habis{background:#ffe0e0;color:#c1121f}
+.kartu-produk .stok.rendah{background:#fff3cd;color:#8a6d00}
+/* FAB */
+.fab-container{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:9px;z-index:20}
+.fab{width:52px;height:52px;border-radius:50%;border:none;background:linear-gradient(135deg,#06a77d,#058a67);color:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 12px rgba(6,167,125,.4);display:flex;align-items:center;justify-content:center}
+.fab:active{transform:scale(.92)}
+/* DETAIL */
+#screen-detail .content,#screen-dokumen-view .content{flex:1;overflow-y:auto;padding-bottom:30px}
+.detail-gambar{width:100%;height:200px;background:linear-gradient(135deg,#e0e7ff,#cfd8ff);display:flex;align-items:center;justify-content:center;font-size:90px;overflow:hidden}
+.detail-gambar img{width:100%;height:100%;object-fit:cover}
+.detail-body{padding:14px}
+.detail-body h2{font-size:17px;color:#1e3c72;margin-bottom:6px}
+.badge{display:inline-block;background:#e0e7ff;color:#2a5298;padding:3px 9px;border-radius:7px;font-size:10px;font-weight:600;margin-right:5px;margin-bottom:9px}
+.detail-section{background:#fff;border-radius:11px;padding:13px;margin-bottom:11px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.detail-section .title{font-size:10px;color:#888;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px dashed #eee;gap:10px}
+.detail-row:last-child{border-bottom:none}
+.detail-row .label{color:#666;flex-shrink:0}
+.detail-row .value{font-weight:600;color:#222;text-align:right;word-break:break-word}
+.harga-list{font-size:12px;color:#888;text-decoration:line-through}
+.harga-diskon{font-size:18px;font-weight:700;color:#2a5298}
+.action-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+/* DOKUMEN LIST */
+#screen-dokumen-list .content{flex:1;overflow-y:auto;padding:11px;padding-bottom:80px}
+.filter-bar{background:#fff;border-radius:10px;padding:11px;margin-bottom:11px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.filter-bar input,.filter-bar select{padding:9px 11px;border-radius:8px;border:1px solid #ddd;font-size:12px;background:#fff;outline:none;width:100%}
+.filter-bar input[type=date]{grid-column:1/-1}
+.dok-item{background:#fff;border-radius:11px;padding:13px;margin-bottom:9px;box-shadow:0 2px 6px rgba(0,0,0,.05);cursor:pointer;border-left:4px solid #2a5298;transition:.15s}
+.dok-item:active{transform:scale(.98)}
+.dok-item.batal{border-left-color:#e63946;opacity:.7}
+.dok-item.tempo{border-left-color:#f77f00}
+.dok-item .dkode{font-size:12px;font-weight:700;color:#1e3c72;display:flex;justify-content:space-between;align-items:center}
+.dok-item .dkode .status{font-size:9px;padding:2px 7px;border-radius:8px;background:#d4edda;color:#155724;font-weight:700}
+.dok-item .dkode .status.batal{background:#f8d7da;color:#721c24}
+.dok-item .dkode .status.tempo{background:#fff3cd;color:#856404}
+.dok-item .dinfo{font-size:11px;color:#666;margin-top:5px;display:flex;justify-content:space-between;gap:8px}
+.dok-item .dinfo .nama{font-weight:600;color:#333;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dok-item .dinfo .total{font-weight:700;color:#2a5298;flex-shrink:0}
+/* DOKUMEN FORM */
+#screen-dokumen-form .content{flex:1;overflow-y:auto;padding:12px;padding-bottom:120px}
+.form-section{background:#fff;border-radius:11px;padding:13px;margin-bottom:11px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.form-section .title{font-size:10px;color:#888;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+.item-row{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid #f0f0f0;align-items:center}
+.item-row:last-child{border-bottom:none}
+.item-row .ir-thumb{width:36px;height:36px;border-radius:7px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden}
+.item-row .ir-thumb img{width:100%;height:100%;object-fit:cover}
+.item-row .ir-info{flex:1;min-width:0}
+.item-row .ir-info h4{font-size:12px;color:#1e3c72;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-row .ir-info p{font-size:11px;color:#2a5298;font-weight:600}
+.item-row .ir-qty{display:flex;align-items:center;gap:5px}
+.item-row .ir-qty button{width:24px;height:24px;border:1px solid #ddd;background:#f9f9f9;border-radius:5px;cursor:pointer;font-weight:bold;font-size:13px}
+.item-row .ir-qty span{min-width:20px;text-align:center;font-size:12px;font-weight:600}
+.item-row .ir-del{background:none;border:none;color:#e63946;cursor:pointer;font-size:16px;padding:4px}
+.form-foot{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:11px 13px;box-shadow:0 -3px 12px rgba(0,0,0,.08);z-index:15;border-top:1px solid #eee}
+.total-line{display:flex;justify-content:space-between;font-size:15px;font-weight:700;margin-bottom:9px;color:#1e3c72}
+.total-line .amount{color:#2a5298}
+.foot-btns{display:flex;gap:9px}
+.foot-btns .btn{flex:1;padding:11px}
+/* PLACEHOLDER */
+#screen-placeholder .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.big-icon{font-size:60px;margin-bottom:14px;opacity:.3}
+#screen-placeholder h2{font-size:17px;margin-bottom:6px;color:#1e3c72}
+#screen-placeholder p{font-size:12px;color:#888;margin-bottom:20px}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:13px;padding:18px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto}
+.modal h3{font-size:15px;margin-bottom:12px;color:#1e3c72}
+.modal .btn-row{display:flex;gap:9px;margin-top:8px}
+.modal .btn-row .btn{padding:11px}
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#222;color:#fff;padding:11px 20px;border-radius:9px;font-size:12px;opacity:0;transition:.3s;z-index:300;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:#e63946}
+.toast.success{background:#06a77d}
+.empty{text-align:center;color:#999;padding:50px 20px;font-size:13px}
+.empty-btn{margin-top:14px;display:inline-block}
+.search-modal-list{max-height:50vh;overflow-y:auto;margin:-8px 0 8px}
+.search-item{display:flex;gap:9px;padding:9px;border-bottom:1px solid #f0f0f0;cursor:pointer;align-items:center}
+.search-item:active{background:#f5f5f5}
+.search-item .si-thumb{width:38px;height:38px;border-radius:7px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.search-item .si-info{flex:1;min-width:0}
+.search-item .si-info h4{font-size:12px;color:#1e3c72;margin-bottom:2px}
+.search-item .si-info p{font-size:10px;color:#888}
+.search-item .si-stok{font-size:11px;font-weight:700;color:#2a5298;padding:3px 8px;background:#e0e7ff;border-radius:7px}
+.user-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #eee;border-radius:9px;margin-bottom:8px}
+.user-row .uname{font-size:13px;font-weight:600;color:#1e3c72}
+.user-row .urole{font-size:10px;color:#888;text-transform:uppercase;margin-top:2px}
+.user-row .uact{display:flex;gap:5px}
+.wa-preview{background:#e7ffdb;border-radius:9px;padding:12px;font-size:11px;white-space:pre-wrap;font-family:'Courier New',monospace;max-height:250px;overflow-y:auto;color:#222;border-left:3px solid #25D366}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3c72">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+
+
+<!-- SETUP -->
+<div class="screen" id="screen-setup">
+  <div class="logo">🎸</div>
+  <div class="app-title">TOKO ALAT MUSIK</div>
+  <div class="app-sub">Sistem Kasir & Gudang</div>
+  <div class="setup-card">
+    <h2>🔧 Setup Awal — Buat Akun Admin</h2>
+    <div class="field"><label>Nama Admin</label><input type="text" id="setupNama" placeholder="Contoh: Siti" maxlength="30"></div>
+    <div class="field"><label>PIN Login (4 angka)</label><input type="tel" id="setupPinLogin" placeholder="••••" maxlength="4" inputmode="numeric"></div>
+    <div class="field"><label>PIN Stok (4 angka)</label><input type="tel" id="setupPinStok" placeholder="••••" maxlength="4" inputmode="numeric"></div>
+    <button class="btn" onclick="simpanSetup()">SIMPAN & MULAI</button>
+  </div>
+</div>
+
+
+<!-- LOGIN -->
+<div class="screen" id="screen-login">
+  <div class="logo">🎸</div>
+  <div class="app-title">TOKO ALAT MUSIK</div>
+  <div class="app-sub" style="margin-bottom:8px">Masukkan PIN Login</div>
+  <div class="pin-dots" id="pinDots"><span></span><span></span><span></span><span></span></div>
+  <div class="keypad">
+    <button onclick="pinPress('1')">1</button><button onclick="pinPress('2')">2</button><button onclick="pinPress('3')">3</button>
+    <button onclick="pinPress('4')">4</button><button onclick="pinPress('5')">5</button><button onclick="pinPress('6')">6</button>
+    <button onclick="pinPress('7')">7</button><button onclick="pinPress('8')">8</button><button onclick="pinPress('9')">9</button>
+    <button onclick="pinDel()">⌫</button><button onclick="pinPress('0')">0</button><button onclick="pinSubmit()">✓</button>
+  </div>
+  <div class="login-msg" id="loginMsg"></div>
+  <button class="btn btn-ghost" style="max-width:180px;margin-top:18px" onclick="resetSemua()">Reset Aplikasi</button>
+</div>
+
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="app-header">
+    <h1>🎸 Toko Musik</h1>
+    <div class="user-badge" onclick="logout()"><span id="userBadge">👤</span><span style="opacity:.6;font-size:10px">⎋</span></div>
+  </div>
+  <div class="content">
+    <div id="draftBannerWrap"></div>
+    <div class="group-title">📄 Transaksi</div>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="bukaDokumenList('invoice')"><div class="icon">🧾</div><div class="label">Invoice</div></div>
+      <div class="menu-card" onclick="bukaDokumenList('suratjalan')"><div class="icon">🚚</div><div class="label">Surat Jalan</div></div>
+    </div>
+    <div class="group-title">📦 Gudang</div>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="bukaDokumenList('barangmasuk')"><div class="icon">📥</div><div class="label">Barang Masuk</div></div>
+      <div class="menu-card" onclick="bukaDokumenList('potongstok')"><div class="icon">✂️</div><div class="label">Potong Stok</div></div>
+      <div class="menu-card" onclick="bukaDokumenList('service')"><div class="icon">🔧</div><div class="label">Service</div></div>
+      <div class="menu-card" onclick="bukaDokumenList('retur')"><div class="icon">↩️</div><div class="label">Retur</div></div>
+    </div>
+    <div class="group-title">📊 Data</div>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="bukaProduk()"><div class="icon">🎸</div><div class="label">Produk</div><div class="count" id="countProduk">0</div></div>
+      <div class="menu-card" onclick="bukaPengaturan()"><div class="icon">⚙️</div><div class="label">Pengaturan</div></div>
+    </div>
+    <div class="group-title">📈 Laporan</div>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="bukaLaporan()"><div class="icon">📈</div><div class="label">Laporan</div></div>
+      <div class="menu-card" onclick="bukaBackup()"><div class="icon">💾</div><div class="label">Backup CSV</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PRODUK -->
+<div class="screen" id="screen-produk">
+  <div class="app-header">
+    <h1><button class="back-btn" onclick="kembaliHome()">←</button> Produk</h1>
+    <div class="right-btns">
+      <button class="icon-btn" onclick="exportProdukCSV()">📤</button>
+      <button class="icon-btn" onclick="document.getElementById('fileImport').click()">📥</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="search-bar">
+      <input type="text" id="cariProduk" placeholder="🔍 Cari nama / model..." oninput="renderProduk()">
+      <select id="filterKategori" onchange="renderProduk()"><option value="">Semua</option></select>
+    </div>
+    <div class="grid-produk" id="gridProduk"></div>
+  </div>
+  <div class="fab-container"><button class="fab" onclick="bukaFormProduk(null)">➕</button></div>
+  <input type="file" id="fileImport" accept=".csv" style="display:none" onchange="importProdukCSV(event)">
+</div>
+
+
+<!-- DETAIL PRODUK -->
+<div class="screen" id="screen-detail">
+  <div class="app-header">
+    <h1><button class="back-btn" onclick="bukaProduk()">←</button> Detail Produk</h1>
+  </div>
+  <div class="content" id="detailContent"></div>
+</div>
+
+
+<!-- DOKUMEN LIST -->
+<div class="screen" id="screen-dokumen-list">
+  <div class="app-header">
+    <h1><button class="back-btn" onclick="kembaliHome()">←</button> <span id="dlTitle">Dokumen</span></h1>
+  </div>
+  <div class="content">
+    <div class="filter-bar">
+      <input type="text" id="dlCari" placeholder="🔍 Kode / nama pihak..." oninput="renderDokumenList()">
+      <select id="dlStatus" onchange="renderDokumenList()">
+        <option value="">Semua Status</option>
+        <option value="aktif">Aktif</option>
+        <option value="dibatalkan">Dibatalkan</option>
+      </select>
+      <input type="date" id="dlTgl" onchange="renderDokumenList()">
+    </div>
+    <div id="dlList"></div>
+  </div>
+  <div class="fab-container"><button class="fab" id="dlFabAdd">➕</button></div>
+</div>
+
+
+<!-- DOKUMEN FORM -->
+<div class="screen" id="screen-dokumen-form">
+  <div class="app-header">
+    <h1><button class="back-btn" onclick="keluarFormDokumen()">←</button> <span id="dfTitle">Dokumen Baru</span></h1>
+  </div>
+  <div class="content">
+    <div class="form-section">
+      <div class="title">📋 Info Dokumen</div>
+      <div class="field"><label>Kode</label><input type="text" id="dfKode" readonly style="background:#f5f5f5;font-weight:600;color:#2a5298"></div>
+      <div class="field"><label>Tanggal</label><input type="date" id="dfTanggal"></div>
+      <div class="field" id="dfPihakWrap"><label id="dfPihakLabel">Nama Pihak</label><input type="text" id="dfPihakNama" placeholder="Nama penerima/pengirim"></div>
+      <div class="field" id="dfPihakHpWrap"><label>No. HP</label><input type="tel" id="dfPihakHp" placeholder="08xxxxxxxx" inputmode="numeric"></div>
+      <div class="field" id="dfTempoWrap" style="display:none"><label>Jatuh Tempo</label><input type="date" id="dfTempo"></div>
+      <div class="field" id="dfAlasanWrap" style="display:none"><label>Alasan</label>
+        <select id="dfAlasan"><option value="Rusak">Rusak</option><option value="Hilang">Hilang</option></select>
+      </div>
+      <div class="field"><label>Keterangan</label><textarea id="dfKeterangan" placeholder="Opsional..."></textarea></div>
+    </div>
+    <div class="form-section">
+      <div class="title">📦 Item <button class="btn btn-sec btn-sm" onclick="bukaPilihProduk()">+ Tambah</button></div>
+      <div id="dfItems"></div>
+    </div>
+  </div>
+  <div class="form-foot">
+    <div class="total-line"><span>Total:</span><span class="amount" id="dfTotal">Rp 0</span></div>
+    <div class="foot-btns">
+      <button class="btn btn-sec" onclick="simpanDraftDokumen()">💾 Draft</button>
+      <button class="btn" onclick="simpanFinalDokumen()">✅ Simpan</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- DOKUMEN VIEW -->
+<div class="screen" id="screen-dokumen-view">
+  <div class="app-header">
+    <h1><button class="back-btn" onclick="bukaDokumenList(currentDocJenis)">←</button> Detail Dokumen</h1>
+  </div>
+  <div class="content" id="dvContent"></div>
+</div>
+
+
+<!-- PLACEHOLDER -->
+<div class="screen" id="screen-placeholder">
+  <div class="app-header"><h1><button class="back-btn" onclick="kembaliHome()">←</button> <span id="phTitle">Modul</span></h1></div>
+  <div class="content">
+    <div class="big-icon" id="phIcon">📊</div>
+    <h2 id="phName">Modul</h2>
+    <p id="phDesc">Sedang dalam pengembangan.</p>
+    <button class="btn btn-sec" style="max-width:200px" onclick="kembaliHome()">Kembali</button>
+  </div>
+</div>
+
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
+<div class="toast" id="toast"></div>
+
+
+<script>
+/* =====================================================
+   STORAGE
+   ===================================================== */
+const DB = {
+  get(k, d=null){ try{ const r=localStorage.getItem('tokomusik_'+k); return r?JSON.parse(r):d; }catch(e){ return d; } },
+  set(k,v){ localStorage.setItem('tokomusik_'+k, JSON.stringify(v)); },
+  del(k){ localStorage.removeItem('tokomusik_'+k); }
+};
+
+
+let currentUser = null, pinBuffer = '';
+let currentDocJenis = null;   // jenis dokumen aktif di list/view
+let currentForm = null;       // { jenis, dokumenId|draftId, items, pihak, ... }
+
+
+/* =====================================================
+   KONFIG DOKUMEN
+   ===================================================== */
+const DOK = {
+  invoice:      { kode:'INV', nama:'Invoice',            icon:'🧾', efekStok:-1, pihakLabel:'Nama Customer', punyaHarga:true,  punyaTempo:false, punyaAlasan:false },
+  suratjalan:   { kode:'SJ',  nama:'Surat Jalan',        icon:'🚚', efekStok:-1, pihakLabel:'Nama Reseller', punyaHarga:true,  punyaTempo:true,  punyaAlasan:false },
+  barangmasuk:  { kode:'BM',  nama:'Barang Masuk',       icon:'📥', efekStok: 1, pihakLabel:'Nama Supplier', punyaHarga:true,  punyaTempo:false, punyaAlasan:false, labelHarga:'Harga Beli' },
+  potongstok:   { kode:'SPS', nama:'Surat Potong Stok',  icon:'✂️', efekStok:-1, pihakLabel:'',              punyaHarga:false, punyaTempo:false, punyaAlasan:true  },
+  service:      { kode:'SVC', nama:'Service',            icon:'🔧', efekStok:-1, pihakLabel:'Nama Teknisi',  punyaHarga:false, punyaTempo:false, punyaAlasan:false },
+  retur:        { kode:'RTR', nama:'Retur',              icon:'↩️', efekStok: 1, pihakLabel:'Nama Customer', punyaHarga:false, punyaTempo:false, punyaAlasan:false }
+};
+
+
+const IKON_KAT = { "Upright Piano":"🎹","TransAcoustic":"🎹","Baby Grand":"🎹","Disklavier":"🎹","Accessories":"🎵","Gitar":"🎸","Keyboard":"🎹","Drum":"🥁" };
+
+
+/* =====================================================
+   PRODUK DEFAULT (18 item)
+   ===================================================== */
+const PRODUK_DEFAULT = [
+  { kode:"UP101", kategori:"Upright Piano", model:"JU109-PE", warna:"Polished Ebony", harga_list:59661000 },
+  { kode:"",      kategori:"Upright Piano", model:"B20-PE",   warna:"Polished Ebony", harga_list:72800000 },
+  { kode:"",      kategori:"Upright Piano", model:"B30-PE",   warna:"Polished Ebony", harga_list:91000000 },
+  { kode:"UP401", kategori:"Upright Piano", model:"U3-PE",    warna:"Polished Ebony", harga_list:164200000 },
+  { kode:"UP501", kategori:"Upright Piano", model:"YUS1-PE",  warna:"Polished Ebony", harga_list:180500000 },
+  { kode:"UP502", kategori:"Upright Piano", model:"YUS1-PM",  warna:"Polished Mahogany", harga_list:240600000 },
+  { kode:"UP503", kategori:"Upright Piano", model:"YUS3-PE",  warna:"Polished Ebony", harga_list:198500000 },
+  { kode:"UP504", kategori:"Upright Piano", model:"YUS5-PE",  warna:"Polished Ebony", harga_list:240600000 },
+  { kode:"UP601", kategori:"TransAcoustic", model:"JU109 TC3-PE", warna:"Polished Ebony", harga_list:72268000 },
+  { kode:"UP701", kategori:"TransAcoustic", model:"U1J TC3-PE",   warna:"Polished Ebony", harga_list:109262000 },
+  { kode:"GP101", kategori:"Baby Grand", model:"GB1K-PE",  warna:"Polished Ebony", harga_list:195700000 },
+  { kode:"GP102", kategori:"Baby Grand", model:"GB1K-PWH", warna:"Polished White", harga_list:222800000 },
+  { kode:"GP103", kategori:"Baby Grand", model:"GB1K-PAW", warna:"Polished American Walnut", harga_list:251600000 },
+  { kode:"GP201", kategori:"Disklavier", model:"DGB1KENST-PE",  warna:"Polished Ebony", harga_list:367395000 },
+  { kode:"GP202", kategori:"Disklavier", model:"DGB1KENST-PWH", warna:"Polished White", harga_list:385895000 },
+  { kode:"GP203", kategori:"Disklavier", model:"DGB1KENST-PAW", warna:"Polished American Walnut", harga_list:422895000 },
+  { kode:"AP101", kategori:"Accessories", model:"UD-WL01", warna:"", harga_list:1895000 },
+  { kode:"AP102", kategori:"Accessories", model:"UNICON POLISH", warna:"", harga_list:293000 }
+];
+
+
+/* =====================================================
+   SEED PRODUK
+   ===================================================== */
+function seedProduk(force){
+  const existing = DB.get('produk', []);
+  if (existing.length > 0 && !force) return false;
+  if (existing.length > 0 && force) {
+    if (!confirm('Produk sudah ada '+existing.length+' item. Tambah 18 contoh lagi?')) return false;
+  }
+  let counter = existing.length > 0 ? DB.get('produkCounter', existing.length) : 0;
+  const produk = existing.slice();
+  PRODUK_DEFAULT.forEach(p => {
+    counter++;
+    produk.push({ id:counter, kode_katalog:p.kode, kategori:p.kategori, model:p.model, nama:p.kategori+' '+p.model,
+      warna:p.warna, harga_list:p.harga_list, diskon_persen:0, harga_diskon:p.harga_list,
+      deskripsi:'-', dimensi:'-', jumlah_koli:'-', berat_total:'-', stok:0, gambar:'' });
+  });
+  DB.set('produk', produk);
+  DB.set('produkCounter', counter);
+  return true;
+}
+
+
+/* =====================================================
+   UTIL
+   ===================================================== */
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+id).classList.add('active'); window.scrollTo(0,0); }
+let toastTimer;
+function showToast(msg, type=''){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+type; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast '+type, 2200); }
+function rupiah(n){ return (!n && n!==0)?'-':'Rp '+Number(n).toLocaleString('id-ID'); }
+function tglIndo(iso){ if(!iso) return '-'; const d=new Date(iso); return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear(); }
+function nowISO(){ return new Date().toISOString(); }
+function todayYMD(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function kodeTanggal(d){ d=d||new Date(); return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0'); }
+function getProdukById(id){ return DB.get('produk', []).find(p=>p.id===id); }
+function getIkonProduk(p){ return IKON_KAT[p.kategori]||'📦'; }
+function formatHP(hp){ if(!hp) return ''; let s=String(hp).replace(/[^\d]/g,''); if(s.startsWith('0')) s='62'+s.slice(1); return s; }
+
+
+/* =====================================================
+   SETUP
+   ===================================================== */
+function simpanSetup(){
+  const nama = document.getElementById('setupNama').value.trim();
+  const pinLogin = document.getElementById('setupPinLogin').value.trim();
+  const pinStok = document.getElementById('setupPinStok').value.trim();
+  if (!nama) return showToast('Nama wajib diisi', 'error');
+  if (!/^\d{4}$/.test(pinLogin)) return showToast('PIN Login harus 4 angka', 'error');
+  if (!/^\d{4}$/.test(pinStok)) return showToast('PIN Stok harus 4 angka', 'error');
+  if (pinLogin === pinStok) return showToast('PIN Login & PIN Stok harus beda', 'error');
+  DB.set('users', [{ id:'user_'+Date.now(), nama, role:'admin', pinLogin, pinStok, createdAt:nowISO() }]);
+  DB.set('initialized', true);
+  seedProduk(false);
+  showToast('Akun Admin dibuat! 🎉', 'success');
+  setTimeout(()=>showScreen('login'), 900);
+}
+
+
+/* =====================================================
+   LOGIN
+   ===================================================== */
+function renderPinDots(){ document.querySelectorAll('#pinDots span').forEach((d,i)=>d.classList.toggle('filled', i<pinBuffer.length)); }
+function pinPress(d){ if(pinBuffer.length>=4) return; pinBuffer+=d; renderPinDots(); document.getElementById('loginMsg').textContent=''; if(pinBuffer.length===4) setTimeout(pinSubmit,150); }
+function pinDel(){ pinBuffer=pinBuffer.slice(0,-1); renderPinDots(); document.getElementById('loginMsg').textContent=''; }
+function pinSubmit(){
+  if (pinBuffer.length < 4) { document.getElementById('loginMsg').textContent='PIN harus 4 angka'; return; }
+  const user = DB.get('users', []).find(u=>u.pinLogin===pinBuffer);
+  if (!user) { document.getElementById('loginMsg').textContent='❌ PIN salah'; pinBuffer=''; renderPinDots(); return; }
+  currentUser = user;
+  DB.set('currentUser', user.id);
+  pinBuffer=''; renderPinDots();
+  masukHome();
+}
+function masukHome(){
+  document.getElementById('userBadge').textContent = '👤 ' + currentUser.nama;
+  if (DB.get('produk', []).length===0) seedProduk(false);
+  document.getElementById('countProduk').textContent = DB.get('produk', []).length;
+  renderDraftBanner();
+  showScreen('home');
+}
+function logout(){
+  if (!confirm('Yakin mau logout?')) return;
+  currentUser = null; DB.del('currentUser');
+  pinBuffer=''; renderPinDots();
+  document.getElementById('loginMsg').textContent='';
+  showScreen('login');
+}
+function kembaliHome(){ masukHome(); }
+
+
+function renderDraftBanner(){
+  const drafts = DB.get('drafts', []);
+  const wrap = document.getElementById('draftBannerWrap');
+  if (drafts.length > 0) {
+    wrap.innerHTML = `<div class="draft-banner" onclick="bukaDraftList()"><div class="info">⚠️ Draft Transaksi (${drafts.length})<small>Ada ${drafts.length} transaksi belum selesai</small></div><button>Lihat</button></div>`;
+  } else { wrap.innerHTML = ''; }
+}
+
+
+function bukaDraftList(){
+  const drafts = DB.get('drafts', []);
+  if (drafts.length===0) return showToast('Tidak ada draft', 'error');
+  let html = '<h3>📝 Draft Transaksi</h3>';
+  drafts.forEach((d, i) => {
+    const cfg = DOK[d.jenis];
+    html += `<div class="dok-item" style="margin-bottom:8px" onclick="tutupModal(); lanjutDraft('${d.id}')">
+      <div class="dkode">${cfg.icon} ${cfg.nama}<span class="status tempo">DRAFT</span></div>
+      <div class="dinfo"><span class="nama">${d.pihak.nama||'(tanpa nama)'}</span><span class="total">${d.items.length} item</span></div>
+      <div class="dinfo" style="margin-top:3px"><span style="font-size:10px;color:#888">${tglIndo(d.tanggal)}</span>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); hapusDraft('${d.id}')">🗑️ Hapus</button>
+      </div></div>`;
+  });
+  document.getElementById('modalContent').innerHTML = html + '<div class="btn-row"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>';
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+function lanjutDraft(draftId){
+  const drafts = DB.get('drafts', []);
+  const d = drafts.find(x => x.id === draftId);
+  if (!d) return;
+  currentForm = JSON.parse(JSON.stringify(d));
+  currentForm.draftId = draftId;
+  bukaFormDokumen(d.jenis, null, d);
+}
+
+
+function hapusDraft(draftId){
+  if (!confirm('Hapus draft ini? Stok akan dikembalikan.')) return;
+  const drafts = DB.get('drafts', []);
+  const d = drafts.find(x => x.id === draftId);
+  if (!d) return;
+  // Kembalikan stok
+  const produk = DB.get('produk', []);
+  const cfg = DOK[d.jenis];
+  d.items.forEach(it => {
+    const p = produk.find(x => x.id === it.produkId);
+    if (p) p.stok -= cfg.efekStok * it.qty; // efekStok -1 → stok - (-1*qty) = +qty
+  });
+  DB.set('produk', produk);
+  DB.set('drafts', drafts.filter(x => x.id !== draftId));
+  showToast('Draft dihapus, stok dikembalikan', 'success');
+  tutupModal();
+  if (document.getElementById('screen-home').classList.contains('active')) masukHome();
+}
+
+
+/* =====================================================
+   PRODUK - LIST & DETAIL
+   ===================================================== */
+function bukaProduk(){ isiFilterKategori(); renderProduk(); showScreen('produk'); }
+
+
+function isiFilterKategori(){
+  const katSet = [...new Set(DB.get('produk', []).map(p => p.kategori))].sort();
+  const sel = document.getElementById('filterKategori');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Semua</option>' + katSet.map(k=>`<option value="${k}">${k}</option>`).join('');
+  sel.value = cur;
+}
+
+
+function renderProduk(){
+  const grid = document.getElementById('gridProduk');
+  const produk = DB.get('produk', []);
+  const cari = document.getElementById('cariProduk').value.toLowerCase();
+  const kat = document.getElementById('filterKategori').value;
+
+
+  if (produk.length === 0) {
+    grid.innerHTML = '<div class="empty">Belum ada produk 😔<div class="empty-btn"><button class="btn" style="max-width:200px" onclick="if(seedProduk(true)){isiFilterKategori();renderProduk();}">📥 Muat 18 Produk Contoh</button></div></div>';
+    return;
+  }
+  const hasil = produk.filter(p => {
+    const t = (p.nama+' '+p.model+' '+p.warna+' '+p.kode_katalog).toLowerCase();
+    return t.includes(cari) && (!kat || p.kategori === kat);
+  });
+  if (hasil.length === 0) { grid.innerHTML = '<div class="empty">Produk tidak ditemukan 😔</div>'; return; }
+
+
+  grid.innerHTML = hasil.map(p => {
+    const stokClass = p.stok === 0 ? 'habis' : (p.stok <= 2 ? 'rendah' : '');
+    const thumb = p.gambar ? `<img src="${p.gambar}" onerror="this.parentElement.textContent='${getIkonProduk(p)}'">` : getIkonProduk(p);
+    return `<div class="kartu-produk" onclick="bukaDetail(${p.id})">
+      <div class="thumb">${thumb}</div>
+      <div class="body">
+        <div class="nama">${p.nama}</div>
+        <div class="meta">${p.warna||'-'}</div>
+        <div class="harga">${rupiah(p.harga_list)}</div>
+        <div class="stok ${stokClass}">Stok: ${p.stok}</div>
+      </div></div>`;
+  }).join('');
+}
+
+
+function bukaDetail(id){
+  const p = getProdukById(id);
+  if (!p) return;
+  const thumb = p.gambar ? `<img src="${p.gambar}" onerror="this.parentElement.textContent='${getIkonProduk(p)}'">` : getIkonProduk(p);
+  const diskon = p.diskon_persen||0;
+  const hargaDiskon = p.harga_diskon||p.harga_list;
+
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-gambar">${thumb}</div>
+    <div class="detail-body">
+      <h2>${p.nama}</h2>
+      <div><span class="badge">${p.kategori}</span>${p.kode_katalog?`<span class="badge">${p.kode_katalog}</span>`:''}</div>
+      <div class="detail-section">
+        <div class="title">💰 Harga</div>
+        <div class="detail-row"><span class="label">Harga List</span><span class="value harga-list">${rupiah(p.harga_list)}</span></div>
+        ${diskon>0?`<div class="detail-row"><span class="label">Diskon</span><span class="value">${diskon}%</span></div>
+        <div class="detail-row"><span class="label">Harga Diskon</span><span class="value harga-diskon">${rupiah(hargaDiskon)}</span></div>`:''}
+      </div>
+      <div class="detail-section">
+        <div class="title">📋 Info</div>
+        <div class="detail-row"><span class="label">Model</span><span class="value">${p.model||'-'}</span></div>
+        <div class="detail-row"><span class="label">Warna</span><span class="value">${p.warna||'-'}</span></div>
+        <div class="detail-row"><span class="label">Dimensi</span><span class="value">${p.dimensi||'-'}</span></div>
+        <div class="detail-row"><span class="label">Jumlah Koli</span><span class="value">${p.jumlah_koli||'-'}</span></div>
+        <div class="detail-row"><span class="label">Berat Total</span><span class="value">${p.berat_total||'-'}</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="title">📝 Deskripsi</div>
+        <div style="font-size:12px;color:#444;line-height:1.5">${p.deskripsi||'-'}</div>
+      </div>
+      <div class="detail-section">
+        <div class="title">📦 Stok</div>
+        <div class="detail-row"><span class="label">Tersedia</span><span class="value" style="color:${p.stok>0?'#06a77d':'#e63946'}">${p.stok} unit</span></div>
+        <div style="margin-top:10px"><button class="btn btn-sec btn-sm" style="width:100%" onclick="inputStokManual(${p.id})">🔐 Input Stok Manual</button></div>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-sec" onclick="bukaFormProduk(${p.id})">✏️ Edit</button>
+        <button class="btn btn-danger" onclick="hapusProduk(${p.id})">🗑️ Hapus</button>
+        <button class="btn" style="grid-column:1/-1" onclick="kartuStok(${p.id})">📊 Kartu Stok</button>
+      </div>
+    </div>`;
+  showScreen('detail');
+}
+
+
+function hapusProduk(id){
+  if (!confirm('Yakin hapus produk ini?')) return;
+  DB.set('produk', DB.get('produk', []).filter(p => p.id !== id));
+  showToast('Produk dihapus', 'success');
+  setTimeout(bukaProduk, 400);
+}
+
+
+function bukaFormProduk(id){
+  const isEdit = id !== null;
+  const produk = isEdit ? getProdukById(id) : null;
+  if (isEdit && !produk) return;
+  const p = produk || { kode_katalog:'', kategori:'', model:'', nama:'', warna:'', harga_list:0, diskon_persen:0, deskripsi:'-', dimensi:'-', jumlah_koli:'-', berat_total:'-', gambar:'' };
+
+
+  document.getElementById('modalContent').innerHTML = `
+    <h3>${isEdit?'✏️ Edit Produk':'➕ Tambah Produk'}</h3>
+    <div class="field"><label>Kode Katalog</label><input id="f_kode" value="${p.kode_katalog||''}"></div>
+    <div class="field"><label>Kategori</label><input id="f_kategori" value="${p.kategori||''}"></div>
+    <div class="field"><label>Model</label><input id="f_model" value="${p.model||''}"></div>
+    <div class="field"><label>Nama Produk (otomatis Kategori + Model)</label><input id="f_nama" value="${p.nama||''}"></div>
+    <div class="field"><label>Warna</label><input id="f_warna" value="${p.warna||''}"></div>
+    <div class="field"><label>Harga List</label><input type="tel" id="f_harga" value="${p.harga_list||0}" inputmode="numeric"></div>
+    <div class="field"><label>Diskon (%)</label><input type="tel" id="f_diskon" value="${p.diskon_persen||0}" inputmode="numeric"></div>
+    <div class="field"><label>Deskripsi</label><textarea id="f_deskripsi">${p.deskripsi||'-'}</textarea></div>
+    <div class="field"><label>Dimensi</label><input id="f_dimensi" value="${p.dimensi||'-'}"></div>
+    <div class="field"><label>Jumlah Koli</label><input id="f_koli" value="${p.jumlah_koli||'-'}"></div>
+    <div class="field"><label>Berat Total</label><input id="f_berat" value="${p.berat_total||'-'}"></div>
+    <div class="field"><label>Gambar (URL, opsional)</label><input id="f_gambar" value="${p.gambar||''}"></div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="tutupModal()">Batal</button>
+      <button class="btn" onclick="simpanFormProduk(${isEdit?id:'null'})">Simpan</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+function simpanFormProduk(id){
+  const kategori = document.getElementById('f_kategori').value.trim();
+  const model = document.getElementById('f_model').value.trim();
+  if (!kategori || !model) return showToast('Kategori & Model wajib', 'error');
+  const harga_list = parseInt(document.getElementById('f_harga').value)||0;
+  const diskon_persen = parseInt(document.getElementById('f_diskon').value)||0;
+  const harga_diskon = Math.round(harga_list * (1-diskon_persen/100));
+  const nama = document.getElementById('f_nama').value.trim() || (kategori+' '+model);
+
+
+  const data = { kode_katalog:document.getElementById('f_kode').value.trim(), kategori, model, nama,
+    warna:document.getElementById('f_warna').value.trim(), harga_list, diskon_persen, harga_diskon,
+    deskripsi:document.getElementById('f_deskripsi').value.trim()||'-',
+    dimensi:document.getElementById('f_dimensi').value.trim()||'-',
+    jumlah_koli:document.getElementById('f_koli').value.trim()||'-',
+    berat_total:document.getElementById('f_berat').value.trim()||'-',
+    gambar:document.getElementById('f_gambar').value.trim() };
+
+
+  let produk = DB.get('produk', []);
+  if (id) {
+    produk = produk.map(p => p.id===id ? {...p, ...data} : p);
+    showToast('Produk diubah', 'success');
+  } else {
+    const c = (DB.get('produkCounter', 0)) + 1;
+    DB.set('produkCounter', c);
+    produk.push({ id:c, ...data, stok:0 });
+    showToast('Produk ditambahkan', 'success');
+  }
+  DB.set('produk', produk);
+  tutupModal();
+  bukaProduk();
+}
+
+
+function tutupModal(){ document.getElementById('modalOverlay').classList.remove('active'); }
+
+
+/* =====================================================
+   INPUT STOK MANUAL (butuh PIN Stok)
+   ===================================================== */
+function inputStokManual(id){
+  if (!currentUser.pinStok) return showToast('Anda tidak punya akses stok manual', 'error');
+  const p = getProdukById(id);
+  if (!p) return;
+
+
+  document.getElementById('modalContent').innerHTML = `
+    <h3>🔐 Input Stok Manual</h3>
+    <p style="font-size:12px;color:#666;margin-bottom:10px">Produk: <b>${p.nama}</b><br>Stok saat ini: <b>${p.stok}</b></p>
+    <div class="field"><label>PIN Stok</label><input type="tel" id="pinStokInput" maxlength="4" inputmode="numeric" placeholder="••••"></div>
+    <div class="field"><label>Stok Baru</label><input type="tel" id="stokBaru" inputmode="numeric" value="${p.stok}"></div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="tutupModal()">Batal</button>
+      <button class="btn" onclick="simpanStokManual(${id})">Simpan</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+function simpanStokManual(id){
+  const pin = document.getElementById('pinStokInput').value.trim();
+  if (pin !== currentUser.pinStok) return showToast('PIN Stok salah', 'error');
+  const stokBaru = parseInt(document.getElementById('stokBaru').value);
+  if (isNaN(stokBaru) || stokBaru < 0) return showToast('Stok tidak valid', 'error');
+  const produk = DB.get('produk', []);
+  const p = produk.find(x => x.id === id);
+  if (!p) return;
+  p.stok = stokBaru;
+  DB.set('produk', produk);
+  showToast('Stok diperbarui', 'success');
+  tutupModal();
+  bukaDetail(id);
+}
+
+
+/* =====================================================
+   KARTU STOK
+   ===================================================== */
+function kartuStok(id){
+  const p = getProdukById(id);
+  if (!p) return;
+  const semua = DB.get('dokumen', []).filter(d => d.items.some(it => it.produkId === id));
+  semua.sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
+
+
+  let html = `<h3>📊 Kartu Stok</h3><p style="font-size:12px;color:#666;margin-bottom:10px"><b>${p.nama}</b> • Stok sekarang: <b>${p.stok}</b></p>`;
+  if (semua.length === 0) html += '<div class="empty" style="padding:20px">Belum ada riwayat</div>';
+  else {
+    html += '<div style="max-height:50vh;overflow-y:auto">';
+    semua.forEach(d => {
+      const cfg = DOK[d.jenis];
+      const it = d.items.find(x => x.produkId === id);
+      const isIn = cfg.efekStok > 0;
+      const status = d.status === 'dibatalkan' ? ' <span style="color:#e63946;font-size:10px">(DIBATALKAN)</span>' : '';
+      html += `<div style="padding:8px;border-bottom:1px solid #f0f0f0;font-size:11px">
+        <div style="display:flex;justify-content:space-between"><b>${cfg.icon} ${d.kode}${status}</b><span style="color:${isIn?'#06a77d':'#e63946'};font-weight:700">${isIn?'+':'-'}${it.qty}</span></div>
+        <div style="color:#888;margin-top:2px">${tglIndo(d.tanggal)} • ${d.pihak.nama||'-'}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  html += '<div class="btn-row" style="margin-top:12px"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>';
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+/* =====================================================
+   CSV PRODUK
+   ===================================================== */
+function exportProdukCSV(){
+  const produk = DB.get('produk', []);
+  if (produk.length === 0) return showToast('Belum ada produk', 'error');
+  const header = ['id','kode_katalog','kategori','model','nama','warna','harga_list','diskon_persen','harga_diskon','deskripsi','dimensi','jumlah_koli','berat_total','stok','gambar'];
+  const rows = produk.map(p => header.map(h => {
+    const v = p[h]==null?'':p[h];
+    const s = String(v).replace(/"/g,'""');
+    return s.includes(',')||s.includes('"')||s.includes('\n') ? `"${s}"` : s;
+  }).join(','));
+  downloadCSV([header.join(','), ...rows].join('\n'), 'produk_'+todayYMD());
+}
+
+
+function importProdukCSV(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const text = ev.target.result.replace(/^\uFEFF/, '');
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) return showToast('File CSV kosong', 'error');
+      const header = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+      const produk = DB.get('produk', []);
+      let counter = DB.get('produkCounter', produk.length);
+      let ditambah = 0, diupdate = 0;
+
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const row = {};
+        header.forEach((h, idx) => row[h] = (cols[idx]||'').trim());
+        if (!row.kategori || !row.model) continue;
+        const harga_list = parseInt((row.harga_list||'').replace(/[^\d]/g,''))||0;
+        const diskon_persen = parseInt((row.diskon_persen||'').replace(/[^\d]/g,''))||0;
+        const harga_diskon = Math.round(harga_list * (1 - diskon_persen/100));
+        const nama = row.nama || (row.kategori+' '+row.model);
+
+
+        let existing = null;
+        if (row.kode_katalog) existing = produk.find(p => p.kode_katalog === row.kode_katalog);
+        if (!existing) existing = produk.find(p => p.kategori === row.kategori && p.model === row.model);
+
+
+        const data = { kode_katalog:row.kode_katalog||'', kategori:row.kategori, model:row.model, nama,
+          warna:row.warna||'', harga_list, diskon_persen, harga_diskon,
+          deskripsi:row.deskripsi||'-', dimensi:row.dimensi||'-',
+          jumlah_koli:row.jumlah_koli||'-', berat_total:row.berat_total||'-', gambar:row.gambar||'' };
+
+
+        if (existing) { Object.assign(existing, data); diupdate++; }
+        else { counter++; produk.push({ id:counter, ...data, stok:0 }); ditambah++; }
+      }
+      DB.set('produk', produk);
+      DB.set('produkCounter', counter);
+      showToast(`✅ Impor: ${ditambah} baru, ${diupdate} update`, 'success');
+      bukaProduk();
+    } catch(err) { showToast('Gagal impor: '+err.message, 'error'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+
+function parseCSVLine(line){
+  const result = []; let cur = '', inQuote = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQuote) {
+      if (c === '"' && line[i+1] === '"') { cur += '"'; i++; }
+      else if (c === '"') inQuote = false;
+      else cur += c;
+    } else {
+      if (c === '"') inQuote = true;
+      else if (c === ',') { result.push(cur); cur = ''; }
+      else cur += c;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+
+function downloadCSV(csv, filename){
+  const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+/* =====================================================
+   KODE DOKUMEN
+   ===================================================== */
+function kodeDokumenBaru(jenis){
+  const cfg = DOK[jenis];
+  const counters = DB.get('dokumenCounter', {});
+  const next = (counters[jenis] || 0) + 1;
+  return cfg.kode + '-' + kodeTanggal() + '-' + String(next).padStart(3, '0');
+}
+
+
+function commitKodeDokumen(jenis){
+  const counters = DB.get('dokumenCounter', {});
+  counters[jenis] = (counters[jenis] || 0) + 1;
+  DB.set('dokumenCounter', counters);
+}
+
+
+/* =====================================================
+   DOKUMEN LIST
+   ===================================================== */
+function bukaDokumenList(jenis){
+  currentDocJenis = jenis;
+  const cfg = DOK[jenis];
+  document.getElementById('dlTitle').textContent = cfg.nama;
+  document.getElementById('dlCari').value = '';
+  document.getElementById('dlStatus').value = '';
+  document.getElementById('dlTgl').value = '';
+  document.getElementById('dlFabAdd').onclick = () => buatDokumenBaru(jenis);
+  renderDokumenList();
+  showScreen('dokumen-list');
+}
+
+
+function renderDokumenList(){
+  const jenis = currentDocJenis;
+  const cfg = DOK[jenis];
+  const list = DB.get('dokumen', []).filter(d => d.jenis === jenis);
+  const cari = document.getElementById('dlCari').value.toLowerCase();
+  const status = document.getElementById('dlStatus').value;
+  const tglFilter = document.getElementById('dlTgl').value;
+
+
+  let filtered = list.filter(d => {
+    const cocokCari = !cari || d.kode.toLowerCase().includes(cari) || (d.pihak.nama||'').toLowerCase().includes(cari);
+    const cocokStatus = !status || d.status === status;
+    const cocokTgl = !tglFilter || d.tanggal.startsWith(tglFilter);
+    return cocokCari && cocokStatus && cocokTgl;
+  });
+  filtered.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+
+  const wrap = document.getElementById('dlList');
+  if (filtered.length === 0) {
+    wrap.innerHTML = `<div class="empty">Belum ada ${cfg.nama} 😔<div class="empty-btn"><button class="btn" style="max-width:200px" onclick="buatDokumenBaru('${jenis}')">➕ Buat ${cfg.nama}</button></div></div>`;
+    return;
+  }
+  wrap.innerHTML = filtered.map(d => {
+    const statusClass = d.status === 'dibatalkan' ? 'batal' : (d.tempo ? 'tempo' : '');
+    const statusLabel = d.status === 'dibatalkan' ? 'DIBATALKAN' : (d.tempo ? 'TEMPO' : 'AKTIF');
+    return `<div class="dok-item ${statusClass}" onclick="lihatDokumen('${d.id}')">
+      <div class="dkode">${cfg.icon} ${d.kode}<span class="status ${statusClass}">${statusLabel}</span></div>
+      <div class="dinfo"><span class="nama">${d.pihak.nama||'(tanpa nama)'}</span><span class="total">${rupiah(d.total)}</span></div>
+      <div class="dinfo" style="margin-top:3px"><span style="font-size:10px;color:#888">${tglIndo(d.tanggal)}</span><span style="font-size:10px;color:#888">${d.items.length} item</span></div>
+    </div>`;
+  }).join('');
+}
+
+
+/* =====================================================
+   DOKUMEN FORM
+   ===================================================== */
+function buatDokumenBaru(jenis){
+  const cfg = DOK[jenis];
+  const kode = kodeDokumenBaru(jenis);
+  currentForm = {
+    jenis,
+    kode,
+    draftId: null,
+    dokumenId: null,
+    tanggal: todayYMD(),
+    pihak: { nama:'', hp:'' },
+    tempo: '',
+    alasan: 'Rusak',
+    keterangan: '',
+    items: []
+  };
+  bukaFormDokumen(jenis, kode);
+}
+
+
+function bukaFormDokumen(jenis, kodeDokumen, formData){
+  const cfg = DOK[jenis];
+  if (formData) currentForm = JSON.parse(JSON.stringify(formData));
+
+
+  document.getElementById('dfTitle').textContent = cfg.nama + (currentForm.draftId ? ' (Draft)' : '');
+  document.getElementById('dfKode').value = currentForm.kode;
+
+
+  const tglEl = document.getElementById('dfTanggal');
+  tglEl.value = (currentForm.tanggal||todayYMD()).slice(0,10);
+
+
+  // Setup field berdasarkan konfigurasi
+  document.getElementById('dfPihakWrap').style.display = cfg.pihakLabel ? 'block' : 'none';
+  document.getElementById('dfPihakLabel').textContent = cfg.pihakLabel || '';
+  document.getElementById('dfPihakNama').value = currentForm.pihak.nama||'';
+  document.getElementById('dfPihakHpWrap').style.display = cfg.pihakLabel ? 'block' : 'none';
+  document.getElementById('dfPihakHp').value = currentForm.pihak.hp||'';
+  document.getElementById('dfTempoWrap').style.display = cfg.punyaTempo ? 'block' : 'none';
+  document.getElementById('dfTempo').value = currentForm.tempo||'';
+  document.getElementById('dfAlasanWrap').style.display = cfg.punyaAlasan ? 'block' : 'none';
+  document.getElementById('dfAlasan').value = currentForm.alasan||'Rusak';
+  document.getElementById('dfKeterangan').value = currentForm.keterangan||'';
+
+
+  renderFormItems();
+  showScreen('dokumen-form');
+}
+
+
+function renderFormItems(){
+  const cfg = DOK[currentForm.jenis];
+  const wrap = document.getElementById('dfItems');
+  if (currentForm.items.length === 0) {
+    wrap.innerHTML = '<div class="empty" style="padding:20px">Belum ada item</div>';
+  } else {
+    wrap.innerHTML = currentForm.items.map((it, idx) => {
+      const p = getProdukById(it.produkId);
+      const ikon = p ? (p.gambar ? `<img src="${p.gambar}">` : getIkonProduk(p)) : '📦';
+      const harga = cfg.punyaHarga ? rupiah(it.harga) : '';
+      return `<div class="item-row">
+        <div class="ir-thumb">${ikon}</div>
+        <div class="ir-info">
+          <h4>${it.nama}</h4>
+          <p>${harga}${harga?' • ':''}Qty: ${it.qty}</p>
+        </div>
+        <div class="ir-qty">
+          <button onclick="ubahQtyForm(${idx}, -1)">−</button>
+          <span>${it.qty}</span>
+          <button onclick="ubahQtyForm(${idx}, 1)">+</button>
+        </div>
+        <button class="ir-del" onclick="hapusItemForm(${idx})">🗑️</button>
+      </div>`;
+    }).join('');
+  }
+  updateFormTotal();
+}
+
+
+function updateFormTotal(){
+  const cfg = DOK[currentForm.jenis];
+  let total = 0;
+  if (cfg.punyaHarga) {
+    currentForm.items.forEach(it => total += it.harga * it.qty);
+  } else {
+    // tetap hitung pakai harga produk sebagai info
+    currentForm.items.forEach(it => total += (it.harga||0) * it.qty);
+  }
+  document.getElementById('dfTotal').textContent = rupiah(total);
+}
+
+
+function ubahQtyForm(idx, delta){
+  const it = currentForm.items[idx];
+  if (!it) return;
+  const produk = getProdukById(it.produkId);
+  const cfg = DOK[currentForm.jenis];
+  const newQty = it.qty + delta;
+  if (newQty <= 0) return hapusItemForm(idx);
+
+
+  // Cek stok kalau efek stok = keluar
+  if (cfg.efekStok === -1 && produk) {
+    if (newQty > produk.stok + (it.qty - (it.qtyOriginal||it.qty))) {
+      // simplified check
+    }
+    if (newQty > produk.stok + it.qty && delta > 0) {
+      // warning kalau stok tidak cukup
+    }
+  }
+  // Update stok realtime
+  if (produk) {
+    const diff = newQty - it.qty; // positif = nambah, negatif = kurangin
+    const stokDelta = -cfg.efekStok * diff; // efekStok -1 → stok - qty_diff
+    produk.stok -= stokDelta;
+    // Cek agar tidak negatif
+    if (produk.stok < 0) {
+      produk.stok += stokDelta; // rollback
+      return showToast('Stok tidak cukup', 'error');
+    }
+    const produkList = DB.get('produk', []);
+    const pIdx = produkList.findIndex(x => x.id === produk.id);
+    produkList[pIdx] = produk;
+    DB.set('produk', produkList);
+  }
+  it.qty = newQty;
+  renderFormItems();
+}
+
+
+function hapusItemForm(idx){
+  const it = currentForm.items[idx];
+  if (!it) return;
+  const cfg = DOK[currentForm.jenis];
+  const produk = getProdukById(it.produkId);
+  if (produk) {
+    // Kembalikan stok
+    produk.stok += cfg.efekStok * it.qty * -1; // efekStok -1 → stok += qty
+    const produkList = DB.get('produk', []);
+    const pIdx = produkList.findIndex(x => x.id === produk.id);
+    produkList[pIdx] = produk;
+    DB.set('produk', produkList);
+  }
+  currentForm.items.splice(idx, 1);
+  renderFormItems();
+}
+
+
+function keluarFormDokumen(){
+  if (currentForm && currentForm.items.length > 0) {
+    if (!confirm('Keluar tanpa simpan? Perubahan akan hilang dan stok dikembalikan.')) return;
+    // Kembalikan semua stok
+    const cfg = DOK[currentForm.jenis];
+    const produkList = DB.get('produk', []);
+    currentForm.items.forEach(it => {
+      const p = produkList.find(x => x.id === it.produkId);
+      if (p) p.stok += cfg.efekStok * it.qty * -1; // rollback
+    });
+    DB.set('produk', produkList);
+    currentForm = null;
+    if (currentDocJenis) bukaDokumenList(currentDocJenis); else kembaliHome();
+  } else {
+    currentForm = null;
+    if (currentDocJenis) bukaDokumenList(currentDocJenis); else kembaliHome();
+  }
+}
+
+
+/* =====================================================
+   PILIH PRODUK UNTUK FORM DOKUMEN
+   ===================================================== */
+function bukaPilihProduk(){
+  const produk = DB.get('produk', []);
+  let html = `<h3>Pilih Produk</h3>
+    <div class="field"><input id="pmCari" placeholder="🔍 Cari produk..." oninput="filterPilihProduk()" style="border:1px solid #ddd;padding:10px;border-radius:8px;width:100%"></div>
+    <div class="search-modal-list" id="pmList"></div>
+    <div class="btn-row"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+  renderPilihProduk(produk);
+  setTimeout(() => document.getElementById('pmCari').focus(), 100);
+}
+
+
+function renderPilihProduk(list){
+  const wrap = document.getElementById('pmList');
+  if (list.length === 0) { wrap.innerHTML = '<div class="empty">Tidak ada produk</div>'; return; }
+  wrap.innerHTML = list.map(p => `
+    <div class="search-item" onclick="tambahItemKeForm(${p.id})">
+      <div class="si-thumb">${p.gambar?`<img src="${p.gambar}" style="width:100%;height:100%;object-fit:cover;border-radius:7px">`:getIkonProduk(p)}</div>
+      <div class="si-info"><h4>${p.nama}</h4><p>${p.warna||'-'} • ${rupiah(p.harga_diskon||p.harga_list)}</p></div>
+      <div class="si-stok">${p.stok}</div>
+    </div>`).join('');
+}
+
+
+function filterPilihProduk(){
+  const q = document.getElementById('pmCari').value.toLowerCase();
+  const produk = DB.get('produk', []).filter(p =>
+    (p.nama+' '+p.model+' '+p.warna+' '+p.kode_katalog).toLowerCase().includes(q)
+  );
+  renderPilihProduk(produk);
+}
+
+
+function tambahItemKeForm(produkId){
+  const p = getProdukById(produkId);
+  if (!p) return;
+  const cfg = DOK[currentForm.jenis];
+
+
+  // Cek stok kalau efek keluar
+  if (cfg.efekStok === -1 && p.stok <= 0) {
+    return showToast('Stok habis', 'error');
+  }
+
+
+  // Cek apakah produk sudah ada di items
+  const exist = currentForm.items.find(it => it.produkId === produkId);
+  if (exist) {
+    exist.qty++;
+  } else {
+    const harga = cfg.labelHarga === 'Harga Beli' ? Math.round(p.harga_list * 0.7) : (p.harga_diskon||p.harga_list);
+    currentForm.items.push({
+      produkId: p.id,
+      nama: p.nama,
+      harga: cfg.punyaHarga ? harga : (p.harga_diskon||p.harga_list),
+      qty: 1
+    });
+  }
+  // Update stok realtime
+  const produkList = DB.get('produk', []);
+  const pl = produkList.find(x => x.id === produkId);
+  if (pl) {
+    pl.stok += cfg.efekStok; // -1 untuk keluar, +1 untuk masuk
+    DB.set('produk', produkList);
+  }
+  tutupModal();
+  renderFormItems();
+}
+
+
+/* =====================================================
+   SIMPAN DOKUMEN (DRAFT / FINAL)
+   ===================================================== */
+function kumpulkanFormData(){
+  return {
+    jenis: currentForm.jenis,
+    kode: currentForm.kode,
+    draftId: currentForm.draftId,
+    dokumenId: currentForm.dokumenId,
+    tanggal: document.getElementById('dfTanggal').value ? new Date(document.getElementById('dfTanggal').value).toISOString() : nowISO(),
+    pihak: {
+      nama: document.getElementById('dfPihakNama').value.trim(),
+      hp: document.getElementById('dfPihakHp').value.trim()
+    },
+    tempo: document.getElementById('dfTempoWrap').style.display !== 'none' ? document.getElementById('dfTempo').value : '',
+    alasan: document.getElementById('dfAlasanWrap').style.display !== 'none' ? document.getElementById('dfAlasan').value : '',
+    keterangan: document.getElementById('dfKeterangan').value.trim(),
+    items: currentForm.items
+  };
+}
+
+
+function simpanDraftDokumen(){
+  if (currentForm.items.length === 0) return showToast('Tambahkan minimal 1 item', 'error');
+  const data = kumpulkanFormData();
+  let total = 0;
+  data.items.forEach(it => total += (it.harga||0) * it.qty);
+  data.total = total;
+  data.dibuatOleh = currentUser.nama;
+  data.status = 'draft';
+  data.createdAt = currentForm.createdAt || nowISO();
+
+
+  const drafts = DB.get('drafts', []);
+  if (currentForm.draftId) {
+    const idx = drafts.findIndex(d => d.id === currentForm.draftId);
+    if (idx >= 0) { data.id = currentForm.draftId; drafts[idx] = data; }
+    else { data.id = 'draft_'+Date.now(); drafts.push(data); }
+  } else {
+    data.id = 'draft_'+Date.now();
+    drafts.push(data);
+  }
+  DB.set('drafts', drafts);
+  showToast('💾 Draft tersimpan', 'success');
+  currentForm = null;
+  if (currentDocJenis) bukaDokumenList(currentDocJenis); else kembaliHome();
+}
+
+
+function simpanFinalDokumen(){
+  if (currentForm.items.length === 0) return showToast('Tambahkan minimal 1 item', 'error');
+  const data = kumpulkanFormData();
+
+
+  // Kalau baru (bukan edit), commit kode
+  if (!currentForm.draftId && !currentForm.dokumenId) {
+    commitKodeDokumen(currentForm.jenis);
+  }
+
+
+  let total = 0;
+  data.items.forEach(it => total += (it.harga||0) * it.qty);
+  data.total = total;
+  data.dibuatOleh = currentUser.nama;
+  data.status = 'aktif';
+  data.createdAt = nowISO();
+  data.id = currentForm.dokumenId || ('dok_' + Date.now());
+
+
+  const dokumenList = DB.get('dokumen', []);
+  if (currentForm.dokumenId) {
+    const idx = dokumenList.findIndex(d => d.id === currentForm.dokumenId);
+    if (idx >= 0) dokumenList[idx] = data;
+  } else {
+    dokumenList.push(data);
+  }
+  DB.set('dokumen', dokumenList);
+
+
+  // Hapus draft jika ada
+  if (currentForm.draftId) {
+    DB.set('drafts', DB.get('drafts', []).filter(d => d.id !== currentForm.draftId));
+  }
+
+
+  showToast('✅ Dokumen tersimpan', 'success');
+  const jenis = currentForm.jenis;
+  const docId = data.id;
+  currentForm = null;
+  setTimeout(() => { bukaDokumenList(jenis); setTimeout(() => lihatDokumen(docId), 200); }, 500);
+}
+
+
+/* =====================================================
+   LIHAT / VOID DOKUMEN
+   ===================================================== */
+function lihatDokumen(docId){
+  const d = DB.get('dokumen', []).find(x => x.id === docId);
+  if (!d) return;
+  const cfg = DOK[d.jenis];
+  const statusLabel = d.status === 'dibatalkan' ? '<span class="badge" style="background:#f8d7da;color:#721c24">DIBATALKAN</span>' : '<span class="badge" style="background:#d4edda;color:#155724">AKTIF</span>';
+  const tempoLabel = d.tempo ? `<span class="badge" style="background:#fff3cd;color:#856404">Tempo: ${tglIndo(d.tempo)}</span>` : '';
+
+
+  let itemsHtml = d.items.map(it => `
+    <div class="detail-row"><span class="label">${it.nama}</span><span class="value">${cfg.punyaHarga?rupiah(it.harga)+' × ':''}${it.qty}</span></div>
+  `).join('');
+
+
+  document.getElementById('dvContent').innerHTML = `
+    <div class="detail-body">
+      <h2>${cfg.icon} ${cfg.nama}</h2>
+      <div>${statusLabel}${tempoLabel}</div>
+      <div class="detail-section" style="margin-top:10px">
+        <div class="title">📋 Info</div>
+        <div class="detail-row"><span class="label">Kode</span><span class="value">${d.kode}</span></div>
+        <div class="detail-row"><span class="label">Tanggal</span><span class="value">${tglIndo(d.tanggal)}</span></div>
+        ${d.pihak.nama?`<div class="detail-row"><span class="label">${cfg.pihakLabel||'Pihak'}</span><span class="value">${d.pihak.nama}</span></div>`:''}
+        ${d.pihak.hp?`<div class="detail-row"><span class="label">HP</span><span class="value">${d.pihak.hp}</span></div>`:''}
+        ${d.alasan?`<div class="detail-row"><span class="label">Alasan</span><span class="value">${d.alasan}</span></div>`:''}
+        ${d.keterangan?`<div class="detail-row"><span class="label">Keterangan</span><span class="value">${d.keterangan}</span></div>`:''}
+        <div class="detail-row"><span class="label">Dibuat oleh</span><span class="value">${d.dibuatOleh||'-'}</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="title">📦 Item</div>
+        ${itemsHtml}
+        ${cfg.punyaHarga?`<div class="detail-row" style="border-top:2px solid #eee;padding-top:8px;margin-top:6px;font-weight:700"><span class="label">TOTAL</span><span class="value harga-diskon">${rupiah(d.total)}</span></div>`:''}
+      </div>
+      ${d.alasanBatal?`<div class="detail-section" style="background:#f8d7da"><div class="title" style="color:#721c24">⚠️ Alasan Pembatalan</div><div style="font-size:12px;color:#721c24">${d.alasanBatal}</div></div>`:''}
+      <div class="action-btns">
+        <button class="btn" onclick="kirimWA('${d.id}')">📤 Kirim WA</button>
+        ${d.status === 'aktif' ? `<button class="btn btn-danger" onclick="voidDokumen('${d.id}')">❌ Batalkan</button>` : '<div></div>'}
+      </div>
+    </div>`;
+  showScreen('dokumen-view');
+}
+
+
+function voidDokumen(docId){
+  const d = DB.get('dokumen', []).find(x => x.id === docId);
+  if (!d) return;
+  document.getElementById('modalContent').innerHTML = `
+    <h3>❌ Batalkan Dokumen</h3>
+    <p style="font-size:12px;color:#666;margin-bottom:10px">Stok akan dikembalikan setelah dibatalkan.</p>
+    <div class="field"><label>Alasan Pembatalan (wajib)</label><textarea id="voidAlasan" placeholder="Contoh: salah input"></textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="tutupModal()">Batal</button>
+      <button class="btn btn-danger" onclick="konfirmasiVoid('${docId}')">Batalkan</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+function konfirmasiVoid(docId){
+  const alasan = document.getElementById('voidAlasan').value.trim();
+  if (!alasan) return showToast('Alasan wajib diisi', 'error');
+  const dokumenList = DB.get('dokumen', []);
+  const d = dokumenList.find(x => x.id === docId);
+  if (!d) return;
+  const cfg = DOK[d.jenis];
+
+
+  // Kembalikan stok
+  const produkList = DB.get('produk', []);
+  d.items.forEach(it => {
+    const p = produkList.find(x => x.id === it.produkId);
+    if (p) p.stok -= cfg.efekStok * it.qty; // efekStok -1 → +qty
+  });
+  DB.set('produk', produkList);
+
+
+  d.status = 'dibatalkan';
+  d.alasanBatal = alasan;
+  d.dibatalkanOleh = currentUser.nama;
+  d.dibatalkanPada = nowISO();
+  DB.set('dokumen', dokumenList);
+  showToast('Dokumen dibatalkan', 'success');
+  tutupModal();
+  lihatDokumen(docId);
+}
+
+
+/* =====================================================
+   KIRIM WHATSAPP
+   ===================================================== */
+function kirimWA(docId){
+  const d = DB.get('dokumen', []).find(x => x.id === docId);
+  if (!d) return;
+  const nomorToko = DB.get('nomorWA', '');
+  const cfg = DOK[d.jenis];
+
+
+  let teks = `*${cfg.nama.toUpperCase()}*\n`;
+  teks += `Kode: ${d.kode}\n`;
+  teks += `Tanggal: ${tglIndo(d.tanggal)}\n`;
+  if (d.pihak.nama) teks += `${cfg.pihakLabel||'Pihak'}: ${d.pihak.nama}\n`;
+  if (d.pihak.hp) teks += `HP: ${d.pihak.hp}\n`;
+  if (d.tempo) teks += `Jatuh Tempo: ${tglIndo(d.tempo)}\n`;
+  if (d.alasan) teks += `Alasan: ${d.alasan}\n`;
+  teks += `\n*Rincian Item:*\n`;
+  d.items.forEach(it => {
+    teks += `- ${it.nama} ${cfg.punyaHarga?'('+rupiah(it.harga)+')':''} x${it.qty}\n`;
+  });
+  if (cfg.punyaHarga) teks += `\n*TOTAL: ${rupiah(d.total)}*\n`;
+  if (d.keterangan) teks += `\nCatatan: ${d.keterangan}\n`;
+  if (d.status === 'dibatalkan') teks += `\n⚠️ DOKUMEN INI SUDAH DIBATALKAN\nAlasan: ${d.alasanBatal}\n`;
+  teks += `\nDibuat oleh: ${d.dibuatOleh||'-'}`;
+
+
+  const url = nomorToko
+    ? `https://wa.me/${formatHP(nomorToko)}?text=${encodeURIComponent(teks)}`
+    : `https://wa.me/?text=${encodeURIComponent(teks)}`;
+
+
+  window.open(url, '_blank');
+}
+
+
+/* =====================================================
+   PENGATURAN
+   ===================================================== */
+function bukaPengaturan(){
+  const users = DB.get('users', []);
+  const nomorWA = DB.get('nomorWA', '');
+
+
+  let userRows = users.map(u => `
+    <div class="user-row">
+      <div>
+        <div class="uname">${u.nama}</div>
+        <div class="urole">${u.role}${u.pinStok?' • punya PIN Stok':''}</div>
+      </div>
+      <div class="uact">
+        <button class="btn btn-sec btn-sm" onclick="editUser('${u.id}')">✏️</button>
+        ${users.length > 1 ? `<button class="btn btn-danger btn-sm" onclick="hapusUser('${u.id}')">🗑️</button>` : ''}
+      </div>
+    </div>`).join('');
+
+
+  document.getElementById('modalContent').innerHTML = `
+    <h3>⚙️ Pengaturan</h3>
+    <div class="field"><label>Nomor WA Toko (untuk kirim dokumen)</label><input id="setNoWA" value="${nomorWA}" placeholder="08xxxxxxxxxx" inputmode="numeric"></div>
+    <button class="btn btn-sec" onclick="simpanNomorWA()" style="margin-bottom:16px">💾 Simpan Nomor WA</button>
+    <div style="font-size:11px;color:#888;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px">👥 Kelola User</div>
+    ${userRows}
+    <button class="btn" onclick="tambahUserBaru()" style="margin-top:8px">➕ Tambah User</button>
+    <div class="btn-row" style="margin-top:12px"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+function simpanNomorWA(){
+  const no = document.getElementById('setNoWA').value.trim();
+  DB.set('nomorWA', no);
+  showToast('Nomor WA disimpan', 'success');
+}
+
+
+function tambahUserBaru(){
+  document.getElementById('modalContent').innerHTML = `
+    <h3>➕ Tambah User</h3>
+    <div class="field"><label>Nama</label><input id="u_nama"></div>
+    <div class="field"><label>Role</label>
+      <select id="u_role"><option value="kasir">Kasir</option><option value="gudang">Gudang</option><option value="admin">Admin</option></select>
+    </div>
+    <div class="field"><label>PIN Login (4 angka)</label><input type="tel" id="u_pinlogin" maxlength="4" inputmode="numeric"></div>
+    <div class="field" id="u_pinstok_wrap"><label>PIN Stok (4 angka, untuk admin/gudang)</label><input type="tel" id="u_pinstok" maxlength="4" inputmode="numeric" placeholder="Boleh kosong untuk kasir"></div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="bukaPengaturan()">Kembali</button>
+      <button class="btn" onclick="simpanUserBaru()">Simpan</button>
+    </div>`;
+}
+
+
+function simpanUserBaru(){
+  const nama = document.getElementById('u_nama').value.trim();
+  const role = document.getElementById('u_role').value;
+  const pinLogin = document.getElementById('u_pinlogin').value.trim();
+  const pinStok = document.getElementById('u_pinstok').value.trim();
+
+
+  if (!nama) return showToast('Nama wajib diisi', 'error');
+  if (!/^\d{4}$/.test(pinLogin)) return showToast('PIN Login harus 4 angka', 'error');
+  if ((role === 'admin' || role === 'gudang') && !/^\d{4}$/.test(pinStok)) return showToast('PIN Stok wajib untuk role ini', 'error');
+
+
+  const users = DB.get('users', []);
+  if (users.find(u => u.pinLogin === pinLogin)) return showToast('PIN Login sudah dipakai', 'error');
+
+
+  users.push({ id:'user_'+Date.now(), nama, role, pinLogin, pinStok: pinStok||'', createdAt:nowISO() });
+  DB.set('users', users);
+  showToast('User ditambahkan', 'success');
+  bukaPengaturan();
+}
+
+
+function editUser(id){
+  const u = DB.get('users', []).find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('modalContent').innerHTML = `
+    <h3>✏️ Edit User</h3>
+    <div class="field"><label>Nama</label><input id="e_nama" value="${u.nama}"></div>
+    <div class="field"><label>Role</label>
+      <select id="e_role"><option value="kasir" ${u.role==='kasir'?'selected':''}>Kasir</option><option value="gudang" ${u.role==='gudang'?'selected':''}>Gudang</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>
+    </div>
+    <div class="field"><label>PIN Login (4 angka)</label><input type="tel" id="e_pinlogin" maxlength="4" inputmode="numeric" value="${u.pinLogin}"></div>
+    <div class="field"><label>PIN Stok (4 angka, boleh kosong)</label><input type="tel" id="e_pinstok" maxlength="4" inputmode="numeric" value="${u.pinStok||''}"></div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="bukaPengaturan()">Kembali</button>
+      <button class="btn" onclick="updateUser('${id}')">Simpan</button>
+    </div>`;
+}
+
+
+function updateUser(id){
+  const users = DB.get('users', []);
+  const u = users.find(x => x.id === id);
+  if (!u) return;
+  const nama = document.getElementById('e_nama').value.trim();
+  const role = document.getElementById('e_role').value;
+  const pinLogin = document.getElementById('e_pinlogin').value.trim();
+  const pinStok = document.getElementById('e_pinstok').value.trim();
+
+
+  if (!nama) return showToast('Nama wajib', 'error');
+  if (!/^\d{4}$/.test(pinLogin)) return showToast('PIN Login harus 4 angka', 'error');
+  if (users.find(x => x.id !== id && x.pinLogin === pinLogin)) return showToast('PIN Login sudah dipakai', 'error');
+
+
+  u.nama = nama; u.role = role; u.pinLogin = pinLogin; u.pinStok = pinStok;
+  DB.set('users', users);
+  showToast('User diperbarui', 'success');
+  bukaPengaturan();
+}
+
+
+function hapusUser(id){
+  if (!confirm('Yakin hapus user ini?')) return;
+  DB.set('users', DB.get('users', []).filter(u => u.id !== id));
+  showToast('User dihapus', 'success');
+  bukaPengaturan();
+}
+
+
+/* =====================================================
+   LAPORAN
+   ===================================================== */
+function bukaLaporan(){
+  document.getElementById('modalContent').innerHTML = `
+    <h3>📈 Laporan</h3>
+    <div class="field"><label>Periode</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+        <button class="btn btn-sm btn-sec" onclick="laporanPeriode('hari')">Hari Ini</button>
+        <button class="btn btn-sm btn-sec" onclick="laporanPeriode('minggu')">Minggu Ini</button>
+        <button class="btn btn-sm btn-sec" onclick="laporanPeriode('bulan')">Bulan Ini</button>
+        <button class="btn btn-sm btn-sec" onclick="laporanPeriode('custom')">Kustom</button>
+      </div>
+    </div>
+    <div id="lapCustom" style="display:none">
+      <div class="field"><label>Dari</label><input type="date" id="lapDari"></div>
+      <div class="field"><label>Sampai</label><input type="date" id="lapSampai"></div>
+      <button class="btn" onclick="jalankanLaporan()" style="margin-bottom:8px">Tampilkan</button>
+    </div>
+    <div class="btn-row"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+let lapPeriode = null;
+function laporanPeriode(p){
+  lapPeriode = p;
+  if (p === 'custom') { document.getElementById('lapCustom').style.display = 'block'; return; }
+  jalankanLaporan();
+}
+
+
+function getRangeTanggal(p){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
+  let dari, sampai;
+  if (p === 'hari') {
+    dari = new Date(y, m, d); sampai = new Date(y, m, d, 23, 59, 59);
+  } else if (p === 'minggu') {
+    const day = now.getDay() === 0 ? 6 : now.getDay() - 1; // Senin = 0
+    dari = new Date(y, m, d - day); sampai = new Date(y, m, d, 23, 59, 59);
+  } else if (p === 'bulan') {
+    dari = new Date(y, m, 1); sampai = new Date(y, m + 1, 0, 23, 59, 59);
+  } else if (p === 'custom') {
+    const dv = document.getElementById('lapDari').value;
+    const sv = document.getElementById('lapSampai').value;
+    if (!dv || !sv) { showToast('Isi tanggal dulu', 'error'); return null; }
+    dari = new Date(dv); sampai = new Date(sv); sampai.setHours(23, 59, 59);
+  }
+  return { dari, sampai };
+}
+
+
+function jalankanLaporan(){
+  const range = getRangeTanggal(lapPeriode);
+  if (!range) return;
+  const { dari, sampai } = range;
+
+
+  const dokumen = DB.get('dokumen', []).filter(d => {
+    const t = new Date(d.tanggal);
+    return t >= dari && t <= sampai && d.status === 'aktif';
+  });
+
+
+  const penjualan = dokumen.filter(d => d.jenis === 'invoice' || d.jenis === 'suratjalan');
+  const pembelian = dokumen.filter(d => d.jenis === 'barangmasuk');
+  const potongStok = dokumen.filter(d => d.jenis === 'potongstok');
+  const serviceDok = dokumen.filter(d => d.jenis === 'service');
+  const returDok = dokumen.filter(d => d.jenis === 'retur');
+
+
+  const totalPenjualan = penjualan.reduce((s, d) => s + (d.total || 0), 0);
+  const totalPembelian = pembelian.reduce((s, d) => s + (d.total || 0), 0);
+  const totalPotong = potongStok.reduce((s, d) => s + d.items.reduce((ss, it) => ss + it.qty, 0), 0);
+
+
+  const produkList = DB.get('produk', []);
+  const nilaiStok = produkList.reduce((s, p) => s + (p.stok * (p.harga_diskon || p.harga_list)), 0);
+  const stokRendah = produkList.filter(p => p.stok <= 2);
+
+
+  let html = `<h3>📈 Laporan</h3>
+    <p style="font-size:11px;color:#888;margin-bottom:10px">Periode: ${tglIndo(dari.toISOString())} — ${tglIndo(sampai.toISOString())}</p>
+
+
+    <div class="detail-section"><div class="title">💰 Penjualan</div>
+      <div class="detail-row"><span class="label">Jumlah transaksi</span><span class="value">${penjualan.length}</span></div>
+      <div class="detail-row"><span class="label">Total</span><span class="value harga-diskon">${rupiah(totalPenjualan)}</span></div>
+      <div style="margin-top:8px"><button class="btn btn-sec btn-sm" style="width:100%" onclick="exportLaporan('penjualan')">📤 Ekspor CSV</button></div>
+    </div>
+
+
+    <div class="detail-section"><div class="title">📥 Pembelian</div>
+      <div class="detail-row"><span class="label">Jumlah dokumen</span><span class="value">${pembelian.length}</span></div>
+      <div class="detail-row"><span class="label">Total</span><span class="value">${rupiah(totalPembelian)}</span></div>
+    </div>
+
+
+    <div class="detail-section"><div class="title">✂️ Barang Rusak/Hilang</div>
+      <div class="detail-row"><span class="label">Jumlah dokumen</span><span class="value">${potongStok.length}</span></div>
+      <div class="detail-row"><span class="label">Total qty</span><span class="value">${totalPotong}</span></div>
+    </div>
+
+
+    <div class="detail-section"><div class="title">🔧 Service & ↩️ Retur</div>
+      <div class="detail-row"><span class="label">Service</span><span class="value">${serviceDok.length} dok</span></div>
+      <div class="detail-row"><span class="label">Retur</span><span class="value">${returDok.length} dok</span></div>
+    </div>
+
+
+    <div class="detail-section"><div class="title">📦 Stok Terkini</div>
+      <div class="detail-row"><span class="label">Total produk</span><span class="value">${produkList.length}</span></div>
+      <div class="detail-row"><span class="label">Nilai persediaan</span><span class="value">${rupiah(nilaiStok)}</span></div>
+      <div class="detail-row"><span class="label">Stok rendah (≤2)</span><span class="value" style="color:#e63946">${stokRendah.length} produk</span></div>
+      <div style="margin-top:8px"><button class="btn btn-sec btn-sm" style="width:100%" onclick="exportLaporan('stok')">📤 Ekspor CSV</button></div>
+    </div>
+
+
+    <div class="btn-row"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>`;
+
+
+  document.getElementById('modalContent').innerHTML = html;
+}
+
+
+function exportLaporan(jenis){
+  const range = getRangeTanggal(lapPeriode);
+  if (!range) return;
+  const { dari, sampai } = range;
+  const dokumen = DB.get('dokumen', []).filter(d => {
+    const t = new Date(d.tanggal);
+    return t >= dari && t <= sampai && d.status === 'aktif';
+  });
+
+
+  if (jenis === 'penjualan') {
+    const penjualan = dokumen.filter(d => d.jenis === 'invoice' || d.jenis === 'suratjalan');
+    const header = ['kode','tanggal','jenis','pihak','total','dibuat_oleh'];
+    const rows = penjualan.map(d => [d.kode, d.tanggal.slice(0,10), DOK[d.jenis].nama, d.pihak.nama||'', d.total||0, d.dibuatOleh||''].map(v => {
+      const s = String(v).replace(/"/g, '""');
+      return s.includes(',') || s.includes('"') ? `"${s}"` : s;
+    }).join(','));
+    downloadCSV([header.join(','), ...rows].join('\n'), 'laporan_penjualan_'+todayYMD());
+    showToast('Laporan diekspor', 'success');
+  } else if (jenis === 'stok') {
+    const produkList = DB.get('produk', []);
+    const header = ['id','kode_katalog','nama','kategori','model','warna','harga_list','harga_diskon','stok','nilai_stok'];
+    const rows = produkList.map(p => [p.id, p.kode_katalog, p.nama, p.kategori, p.model, p.warna, p.harga_list, p.harga_diskon, p.stok, (p.stok * (p.harga_diskon||p.harga_list))].map(v => {
+      const s = String(v==null?'':v).replace(/"/g, '""');
+      return s.includes(',') || s.includes('"') ? `"${s}"` : s;
+    }).join(','));
+    downloadCSV([header.join(','), ...rows].join('\n'), 'laporan_stok_'+todayYMD());
+    showToast('Laporan stok diekspor', 'success');
+  }
+}
+
+
+/* =====================================================
+   BACKUP
+   ===================================================== */
+function bukaBackup(){
+  document.getElementById('modalContent').innerHTML = `
+    <h3>💾 Backup & Restore</h3>
+    <p style="font-size:12px;color:#666;margin-bottom:12px">Ekspor semua data ke CSV untuk backup, atau impor kembali untuk restore.</p>
+    <button class="btn btn-sec" onclick="backupSemua()" style="margin-bottom:8px">📤 Backup Semua Data</button>
+    <button class="btn" onclick="document.getElementById('fileRestore').click()">📥 Restore dari Backup</button>
+    <input type="file" id="fileRestore" accept=".csv" style="display:none" onchange="restoreBackup(event)">
+    <div class="btn-row" style="margin-top:12px"><button class="btn btn-sec" onclick="tutupModal()">Tutup</button></div>`;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+
+function backupSemua(){
+  const produk = DB.get('produk', []);
+  const header = ['id','kode_katalog','kategori','model','nama','warna','harga_list','diskon_persen','harga_diskon','deskripsi','dimensi','jumlah_koli','berat_total','stok','gambar'];
+  const rows = produk.map(p => header.map(h => {
+    const v = p[h]==null?'':p[h];
+    const s = String(v).replace(/"/g,'""');
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s}"` : s;
+  }).join(','));
+  downloadCSV([header.join(','), ...rows].join('\n'), 'backup_produk_'+todayYMD());
+  showToast('Backup berhasil', 'success');
+}
+
+
+function restoreBackup(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('Restore akan MENGGANTI semua data produk. Lanjutkan?')) { e.target.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const text = ev.target.result.replace(/^\uFEFF/, '');
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) return showToast('File kosong', 'error');
+      const header = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+      const produk = [];
+      let counter = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const row = {};
+        header.forEach((h, idx) => row[h] = (cols[idx]||'').trim());
+        if (!row.kategori || !row.model) continue;
+        counter++;
+        produk.push({
+          id: counter,
+          kode_katalog: row.kode_katalog||'',
+          kategori: row.kategori, model: row.model, nama: row.nama || (row.kategori+' '+row.model),
+          warna: row.warna||'',
+          harga_list: parseInt((row.harga_list||'').replace(/[^\d]/g,''))||0,
+          diskon_persen: parseInt((row.diskon_persen||'').replace(/[^\d]/g,''))||0,
+          harga_diskon: parseInt((row.harga_diskon||'').replace(/[^\d]/g,''))||0,
+          deskripsi: row.deskripsi||'-', dimensi: row.dimensi||'-',
+          jumlah_koli: row.jumlah_koli||'-', berat_total: row.berat_total||'-',
+          stok: parseInt(row.stok)||0, gambar: row.gambar||''
+        });
+      }
+      DB.set('produk', produk);
+      DB.set('produkCounter', counter);
+      showToast(`Restore berhasil: ${counter} produk`, 'success');
+      tutupModal();
+      bukaProduk();
+    } catch(err) { showToast('Gagal: '+err.message, 'error'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+
+/* =====================================================
+   RESET
+   ===================================================== */
+function resetSemua(){
+  const konfirmasi = prompt('⚠️ Ini akan MENGHAPUS SEMUA DATA.\n\nKetik "RESET" untuk konfirmasi:');
+  if (konfirmasi === 'RESET') {
+    Object.keys(localStorage).filter(k => k.startsWith('tokomusik_')).forEach(k => localStorage.removeItem(k));
+    location.reload();
+  } else { showToast('Reset dibatalkan', 'error'); }
+}
+
+
+/* =====================================================
+   INIT
+   ===================================================== */
+function init(){
+  if (DB.get('produk', []).length === 0) seedProduk(false);
+  const users = DB.get('users', []);
+  if (users.length === 0) showScreen('setup');
+  else showScreen('login');
+}
+init();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>

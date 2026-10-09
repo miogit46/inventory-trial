@@ -1,0 +1,26 @@
+{
+  "name": "Toko Alat Musik",
+  "short_name": "Toko Musik",
+  "description": "Sistem Kasir & Gudang Toko Alat Musik",
+  "start_url": "./Store.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1e3c72",
+  "theme_color": "#1e3c72",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
